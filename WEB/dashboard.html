@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobPortal - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+    --primary-color: #8b2dfb;
+    --primary-hover: #761cdb;
+    --primary-light: #f3e8ff;
+    
+    --bg-body: #f3f4f6;
+    --bg-white: #ffffff;
+    --border-color: #e5e7eb;
+    
+    --text-dark: #1f2937;
+    --text-muted: #6b7280;
+    
+    --tag-green-bg: #dcfce7;
+    --tag-green-text: #166534;
+    --tag-gray-bg: #f3f4f6;
+    --tag-gray-text: #4b5563;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-dark);
+}
+
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 260px;
+    background: var(--bg-white);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 3rem;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.nav-item i {
+    width: 20px;
+    margin-right: 12px;
+}
+
+.nav-item:hover {
+    background-color: #f9fafb;
+    color: var(--text-dark);
+}
+
+.nav-item.active {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.badge {
+    margin-left: auto;
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.logout-link {
+    display: flex;
+    align-items: center;
+    color: #ef4444;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    gap: 10px;
+}
+
+/* --- Main Content --- */
+.main-content {
+    margin-left: 260px; /* Width of sidebar */
+    flex: 1;
+    padding: 2rem 3rem;
+}
+
+/* Top Header */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.header-text h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.header-text p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    position: relative;
+}
+
+.notification-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid var(--bg-body);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: #2563eb;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+/* Search Container */
+.search-container {
+    background: var(--bg-white);
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.search-input, .location-input {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #f9fafb;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+}
+
+.search-input:focus-within, .location-input:focus-within {
+    border-color: var(--primary-color);
+    background: white;
+}
+
+.search-input input, .location-input input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    margin-left: 10px;
+    font-size: 0.95rem;
+}
+
+.search-input i, .location-input i {
+    color: var(--text-muted);
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    background: #f3f4f6;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-weight: 500;
+    color: var(--text-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-btn:hover {
+    background: #e5e7eb;
+}
+
+/* User Skills Section */
+.skills-section {
+    margin-bottom: 2rem;
+}
+
+.skills-section h3 {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.skill-tag {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.skill-tag.user-skill {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Job Cards */
+.job-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.job-card {
+    background: var(--bg-white);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.job-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.job-info h2 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    color: var(--text-dark);
+}
+
+.company {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.job-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.job-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Circular Progress Ring */
+.skill-match-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.progress-ring {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    /* Create a Conic Gradient based on --value variable */
+    background: conic-gradient(var(--primary-color) calc(var(--value) * 1%), #e5e7eb 0deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.ring-inner {
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.percentage {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.match-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* Card Middle & Bottom */
+.card-middle {
+    margin-bottom: 1.5rem;
+}
+
+.req-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.req-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag.match {
+    background: var(--tag-green-bg);
+    color: var(--tag-green-text);
+}
+
+.skill-tag.missing {
+    background: var(--tag-gray-bg);
+    color: var(--tag-gray-text);
+}
+
+.card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.salary {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.btn-apply {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-apply:hover {
+    background: var(--primary-hover);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 2rem;
+}
+
+.page-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border-color);
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.page-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.page-btn:hover:not(.active) {
+    background: #f3f4f6;
+}
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+        
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="fa-solid fa-briefcase logo-icon"></i>
+                <span>JobPortal</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Browse Jobs</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>My Applications</span>
+                    <span class="badge">3</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-regular fa-user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="logout-link">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <header class="top-header">
+                <div class="header-text">
+                    <h1>Find Your Dream Job</h1>
+                    <p>Discover opportunities that match your skills</p>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                    <div class="user-avatar">JS</div>
+                </div>
+            </header>
+
+            <div class="search-container">
+                <div class="search-input">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search jobs...">
+                </div>
+                <div class="location-input">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <input type="text" placeholder="Location">
+                </div>
+                <button class="filter-btn">
+                    <i class="fa-solid fa-filter"></i> Filters
+                </button>
+            </div>
+
+            <div class="skills-section">
+                <h3>Your Skills</h3>
+                <div class="skills-list">
+                    <span class="skill-tag user-skill">React</span>
+                    <span class="skill-tag user-skill">TypeScript</span>
+                    <span class="skill-tag user-skill">Node.js</span>
+                    <span class="skill-tag user-skill">CSS</span>
+                    <span class="skill-tag user-skill">JavaScript</span>
+                    <span class="skill-tag user-skill">Git</span>
+                </div>
+            </div>
+
+            <div class="job-list">
+
+                <div class="job-card">
+                    <div class="card-top">
+                        <div class="job-info">
+                            <h2>Senior Frontend Developer</h2>
+                            <p class="company">TechCorp Inc.</p>
+                            <div class="job-meta">
+                                <span><i class="fa-solid fa-location-dot"></i> San Francisco, CA</span>
+                                <span><i class="fa-solid fa-briefcase"></i> Full-time</span>
+                                <span>2 days ago</span>
+                            </div>
+                        </div>
+                        <div class="skill-match-wrapper">
+                            <div class="progress-ring" style="--value: 100;">
+                                <div class="ring-inner">
+                                    <span class="percentage">100%</span>
+                                </div>
+                            </div>
+                            <span class="match-label">Skill Match</span>
+                        </div>
+                    </div>
+
+                    <div class="card-middle">
+                        <span class="req-label">Required Skills:</span>
+                        <div class="req-skills">
+                            <span class="skill-tag match">React</span>
+                            <span class="skill-tag match">TypeScript</span>
+                            <span class="skill-tag match">CSS</span>
+                            <span class="skill-tag match">JavaScript</span>
+                            <span class="skill-tag match">Git</span>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom">
+                        <span class="salary">$120k - $150k</span>
+                        <button class="btn-apply">Apply Now</button>
+                    </div>
+                </div>
+
+                <div class="job-card">
+                    <div class="card-top">
+                        <div class="job-info">
+                            <h2>Frontend Engineer</h2>
+                            <p class="company">StartupXYZ</p>
+                            <div class="job-meta">
+                                <span><i class="fa-solid fa-globe"></i> Remote</span>
+                                <span><i class="fa-solid fa-briefcase"></i> Full-time</span>
+                                <span>5 days ago</span>
+                            </div>
+                        </div>
+                        <div class="skill-match-wrapper">
+                            <div class="progress-ring" style="--value: 80;">
+                                <div class="ring-inner">
+                                    <span class="percentage">80%</span>
+                                </div>
+                            </div>
+                            <span class="match-label">Skill Match</span>
+                        </div>
+                    </div>
+
+                    <div class="card-middle">
+                        <span class="req-label">Required Skills:</span>
+                        <div class="req-skills">
+                            <span class="skill-tag match">React</span>
+                            <span class="skill-tag match">TypeScript</span>
+                            <span class="skill-tag missing">Next.js</span>
+                            <span class="skill-tag missing">Tailwind CSS</span>
+                            <span class="skill-tag match">Git</span>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom">
+                        <span class="salary">$100k - $130k</span>
+                        <button class="btn-apply">Apply Now</button>
+                    </div>
+                </div>
+
+                <div class="job-card">
+                    <div class="card-top">
+                        <div class="job-info">
+                            <h2>UI Developer</h2>
+                            <p class="company">DesignHub</p>
+                            <div class="job-meta">
+                                <span><i class="fa-solid fa-location-dot"></i> Seattle, WA</span>
+                                <span><i class="fa-solid fa-briefcase"></i> Full-time</span>
+                                <span>1 week ago</span>
+                            </div>
+                        </div>
+                        <div class="skill-match-wrapper">
+                            <div class="progress-ring" style="--value: 60;">
+                                <div class="ring-inner">
+                                    <span class="percentage">60%</span>
+                                </div>
+                            </div>
+                            <span class="match-label">Skill Match</span>
+                        </div>
+                    </div>
+
+                    <div class="card-middle">
+                        <span class="req-label">Required Skills:</span>
+                        <div class="req-skills">
+                            <span class="skill-tag missing">HTML</span>
+                            <span class="skill-tag match">CSS</span>
+                            <span class="skill-tag match">JavaScript</span>
+                            <span class="skill-tag match">React</span>
+                            <span class="skill-tag missing">Figma</span>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom">
+                        <span class="salary">$95k - $125k</span>
+                        <button class="btn-apply">Apply Now</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pagination">
+                <button class="page-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>

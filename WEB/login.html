@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <title>Login Form</title>
+    <style>
+      :root {
+        /* Updated colors to match Signup page */
+        --primary-color: #8b2dfb; 
+        --primary-hover: #761cdb;
+        --bg-gradient-start: #eef4fc;
+        --bg-gradient-end: #dfe7f5;
+        --text-dark: #1f2937;
+        --text-gray: #6b7280;
+        --border-color: #e5e7eb;
+        --input-bg: #f3f4f6;
+        --white: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        /* Updated background to Radial Gradient */
+        background: radial-gradient(circle at center, var(--bg-gradient-start), var(--bg-gradient-end));
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-dark);
+      }
+
+      .min-wrapper {
+        width: 100%;
+        max-width: 420px; /* Matched width to Signup */
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: var(--text-gray);
+        font-size: 0.9rem;
+        font-weight: 500;
+        align-self: flex-start; /* Aligns to left like Signup */
+        transition: color 0.3s;
+      }
+
+      .back-link:hover {
+        color: var(--text-dark);
+      }
+
+      .login-card {
+        background-color: var(--white);
+        padding: 2.5rem 2rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        text-align: center;
+        width: 100%;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+      }
+
+      .header h2 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700; /* Bolder title matching Signup */
+        color: var(--text-dark);
+      }
+
+      .header p {
+        color: var(--text-gray);
+        font-size: 0.875rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .role-label {
+        text-align: left;
+        margin-bottom: 8px;
+        font-size: 0.875rem;
+        color: var(--text-gray);
+      }
+
+      .role-selector {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 1.25rem;
+      }
+
+      .role-btn {
+        flex: 1;
+        padding: 10px 0;
+        background: transparent; /* Changed to transparent default */
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: var(--text-gray);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .role-btn.active {
+        background: var(--primary-color);
+        color: var(--white);
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 6px rgba(139, 45, 251, 0.2);
+      }
+
+      .role-btn:hover:not(.active) {
+        background: #f9fafb;
+      }
+
+      .form-group {
+        margin-bottom: 1.25rem;
+        text-align: left;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        color: var(--text-gray);
+        margin-bottom: 0.5rem;
+      }
+
+      .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .input-wrapper i {
+        position: absolute;
+        left: 14px;
+        color: #9ca3af;
+        font-size: 0.9rem;
+        z-index: 10;
+        transition: color 0.2s;
+      }
+      
+      /* Input Focus: Color the icon */
+      .form-control:focus + i, 
+      .input-wrapper:focus-within i {
+         color: var(--primary-color);
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px 16px 12px 42px; /* Adjusted padding to match Signup style */
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s, background-color 0.2s;
+        background: var(--input-bg); /* Use input background var */
+        color: var(--text-dark);
+      }
+
+      .form-control:focus {
+        border-color: var(--primary-color);
+        background: var(--white);
+        box-shadow: 0 0 0 3px rgba(139, 45, 251, 0.1);
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+      }
+
+      .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-gray);
+        cursor: pointer;
+        font-size: 0.85rem;
+      }
+      
+      .remember-me input {
+        accent-color: var(--primary-color);
+      }
+
+      .forgot-password {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .forgot-password:hover {
+        text-decoration: underline;
+      }
+
+      .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-bottom: 1.5rem;
+        transition: background 0.2s;
+        box-shadow: 0 4px 6px rgba(139, 45, 251, 0.25);
+      }
+
+      .btn-submit:hover {
+        background: var(--primary-hover);
+      }
+
+      .signup-text {
+        font-size: 0.875rem;
+        color: var(--text-gray);
+      }
+
+      .signup-text a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .signup-text a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="min-wrapper">
+      <a href="#" class="back-link"><i class="fa-solid fa-arrow-left"></i>Back to home</a>
+      <div class="login-card">
+
+        <div class="logo">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>JobPortal</span>
+        </div>
+
+        <div class="header">
+            <h2>Welcome Back</h2>
+            <p>Sign in to your account</p>
+        </div>
+
+        <div class="role-label">
+            I am a
+        </div>
+        <div class="role-selector">
+            <button class="role-btn active">Job Seeker</button>
+            <button class="role-btn">Employer</button>
+            <button class="role-btn">Admin</button>
+        </div>
+        <form action="#">
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" class="form-control" placeholder="you@example.com">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" class="form-control" placeholder="........">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <label class="remember-me">
+                    <input type="checkbox"> Remember me
+                </label>
+                <a class="forgot-password" href="#">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn-submit">Sign In</button>
+            <p class="signup-text">
+                    Don't have an account? <a href="#">Sign up</a>
+            </p>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
