@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+/* @source "../src"; 
+  (Optional: Add this if classes in your Vue files aren't being detected)
+*/
+
+/* Base styles */
+body {
+  /* In v4, custom colors from config might need the theme function if @apply fails, 
+     but linking the config usually makes them available. */
+  @apply bg-bgbody text-dark font-sans;
+}
