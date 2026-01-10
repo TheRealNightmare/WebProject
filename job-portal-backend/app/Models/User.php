@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'title',
+        'location',
+        'resume_path'
     ];
 
     /**
@@ -44,5 +48,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class);
+    }
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'seeker_id');
     }
 }
