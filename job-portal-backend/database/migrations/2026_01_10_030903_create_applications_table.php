@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('job_id')->constrained()->onDelete('cascade');
+            $table->foreignId('seeker_id')->constrained('users')->onDelete('cascade');
+            $table->text('cover_letter')->nullable();
+            $table->string('resume_path')->nullable();
+            $table->float('match_percentage')->default(0); // The Twist stored here
+            $table->enum('status', ['pending', 'reviewed', 'interview', 'rejected'])->default('pending');
             $table->timestamps();
         });
     }
