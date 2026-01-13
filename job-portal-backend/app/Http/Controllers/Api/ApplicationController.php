@@ -38,4 +38,15 @@ class ApplicationController extends Controller
 
         return response()->json(['message' => 'Application submitted successfully']);
     }
+
+    public function myApplications(Request $request)
+    {
+        $user = auth('sanctum')->user();
+        $applications = Application::with(['job.employer'])
+            ->where('seeker_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($applications);
+    }
 }
