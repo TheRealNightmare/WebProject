@@ -4,7 +4,7 @@
     class="fixed inset-0 bg-black/50 flex justify-center items-center p-5 z-[100] backdrop-blur-sm"
   >
     <div
-      class="bg-white w-full max-w-2xl rounded-xl p-8 shadow-2xl animate-[fadeIn_0.3s_ease-out]"
+      class="bg-white w-full max-w-2xl rounded-xl p-8 shadow-2xl animate-[fadeIn_0.3s_ease-out] overflow-y-auto max-h-[90vh]"
     >
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-xl font-bold text-dark">Post New Job</h3>
@@ -16,20 +16,23 @@
         </button>
       </div>
 
-      <form @submit.prevent="$emit('submit')">
+      <form @submit.prevent="submitJob">
         <div class="space-y-5">
           <div>
             <label class="block text-sm text-muted mb-1.5">Job Title</label>
             <input
+              v-model="form.title"
               type="text"
+              required
               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
-              placeholder="e.g. Senior Frontend Developer"
             />
           </div>
 
           <div>
             <label class="block text-sm text-muted mb-1.5">Description</label>
             <textarea
+              v-model="form.description"
+              required
               rows="4"
               class="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"
             ></textarea>
@@ -39,9 +42,10 @@
             <div>
               <label class="block text-sm text-muted mb-1.5">Location</label>
               <input
+                v-model="form.location"
                 type="text"
+                required
                 class="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:border-primary outline-none"
-                placeholder="e.g. Remote"
               />
             </div>
             <div>
@@ -49,7 +53,9 @@
                 >Salary Range</label
               >
               <input
+                v-model="form.salary"
                 type="text"
+                required
                 class="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:border-primary outline-none"
                 placeholder="$100k - $120k"
               />
@@ -57,31 +63,65 @@
           </div>
 
           <div>
-            <label class="block text-sm text-muted mb-1.5"
-              >Required Skills</label
+            <label class="block text-sm text-muted mb-1.5">Type</label>
+            <select
+              v-model="form.type"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:border-primary outline-none"
             >
-            <div class="flex gap-2">
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+              <option value="Contract">Contract</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm text-muted mb-1.5"
+              >Required Skills (Press Enter to add)</label
+            >
+            <div class="flex gap-2 mb-2">
               <input
+                v-model="skillInput"
+                @keydown.enter.prevent="addSkill"
                 type="text"
                 class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:border-primary outline-none"
                 placeholder="Add skill..."
               />
               <button
                 type="button"
+                @click="addSkill"
                 class="px-5 py-2.5 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover"
               >
                 Add
               </button>
             </div>
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="(s, index) in form.skills"
+                :key="index"
+                class="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+              >
+                {{ s }}
+                <button
+                  type="button"
+                  @click="form.skills.splice(index, 1)"
+                  class="text-red-500 hover:text-red-700"
+                >
+                  &times;
+                </button>
+              </span>
+            </div>
           </div>
         </div>
 
+        <div v-if="error" class="text-red-500 mt-4 text-sm">{{ error }}</div>
+
         <div class="flex gap-3 mt-8">
           <button
+            :disabled="loading"
             type="submit"
-            class="flex-[3] py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all"
+            class="flex-[3] py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all disabled:opacity-50"
           >
-            Post Job
+            {{ loading ? "Posting..." : "Post Job" }}
           </button>
           <button
             type="button"
@@ -97,6 +137,51 @@
 </template>
 
 <script setup>
+import { ref, reactive } from "vue";
+import api from "../api";
+
 defineProps({ isOpen: Boolean });
-defineEmits(["close", "submit"]);
+const emit = defineEmits(["close", "jobPosted"]);
+
+const loading = ref(false);
+const error = ref("");
+const skillInput = ref("");
+
+const form = reactive({
+  title: "",
+  description: "",
+  location: "",
+  salary: "",
+  type: "Full-time",
+  skills: [],
+});
+
+const addSkill = () => {
+  if (skillInput.value.trim()) {
+    form.skills.push(skillInput.value.trim());
+    skillInput.value = "";
+  }
+};
+
+const submitJob = async () => {
+  loading.value = true;
+  error.value = "";
+  try {
+    await api.post("/employer/jobs", form);
+    // Reset form
+    Object.assign(form, {
+      title: "",
+      description: "",
+      location: "",
+      salary: "",
+      type: "Full-time",
+      skills: [],
+    });
+    emit("jobPosted");
+  } catch (err) {
+    error.value = err.response?.data?.message || "Failed to post job";
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
