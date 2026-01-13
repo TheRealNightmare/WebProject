@@ -13,23 +13,6 @@
       <p class="text-sm text-muted">Sign in to your account</p>
     </div>
 
-    <div class="text-left text-sm text-muted mb-2">I am a</div>
-    <div class="flex gap-3 mb-5">
-      <button
-        v-for="role in roles"
-        :key="role"
-        @click="activeRole = role"
-        :class="[
-          'flex-1 py-2.5 border rounded-lg text-sm font-medium transition-all',
-          activeRole === role
-            ? 'bg-primary text-white border-primary shadow-md'
-            : 'bg-transparent border-gray-200 text-muted hover:bg-gray-50',
-        ]"
-      >
-        {{ role }}
-      </button>
-    </div>
-
     <form @submit.prevent="handleLogin">
       <div class="space-y-5 mb-6 text-left">
         <div>
@@ -39,7 +22,9 @@
               class="fa-solid fa-envelope absolute left-4 text-gray-400 text-sm group-focus-within:text-primary transition-colors"
             ></i>
             <input
+              v-model="email"
               type="email"
+              required
               class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-sm focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 outline-none transition-all"
               placeholder="you@example.com"
             />
@@ -52,12 +37,18 @@
               class="fa-solid fa-lock absolute left-4 text-gray-400 text-sm group-focus-within:text-primary transition-colors"
             ></i>
             <input
+              v-model="password"
               type="password"
+              required
               class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-sm focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 outline-none transition-all"
               placeholder="........"
             />
           </div>
         </div>
+      </div>
+
+      <div v-if="errorMessage" class="text-red-500 text-sm mb-4">
+        {{ errorMessage }}
       </div>
 
       <div class="flex justify-between items-center mb-6 text-sm">
@@ -72,9 +63,10 @@
       </div>
 
       <button
-        class="w-full py-3 bg-primary text-white rounded-lg font-semibold shadow-lg shadow-primary/25 hover:bg-primary-hover transition-all mb-6"
+        :disabled="isLoading"
+        class="w-full py-3 bg-primary text-white rounded-lg font-semibold shadow-lg shadow-primary/25 hover:bg-primary-hover transition-all mb-6 disabled:opacity-50"
       >
-        Sign In
+        {{ isLoading ? "Signing In..." : "Sign In" }}
       </button>
 
       <p class="text-sm text-muted">
@@ -92,17 +84,42 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import api from "../../api";
 
 const router = useRouter();
-const roles = ["Job Seeker", "Employer", "Admin"];
-const activeRole = ref("Job Seeker");
+const email = ref("");
+const password = ref("");
+const isLoading = ref(false);
+const errorMessage = ref("");
 
-const handleLogin = () => {
-  const paths = {
-    "Job Seeker": "/app/seeker/dashboard",
-    Employer: "/app/employer/jobs",
-    Admin: "/app/admin/dashboard",
-  };
-  router.push(paths[activeRole.value]);
+const handleLogin = async () => {
+  isLoading.value = true;
+  errorMessage.value = "";
+
+  try {
+    const response = await api.post("/login", {
+      email: email.value,
+      password: password.value,
+    });
+
+    // Store auth data
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
+
+    // Redirect based on the role returned by the backend
+    const userRole = response.data.role;
+    const paths = {
+      seeker: "/app/seeker/dashboard",
+      employer: "/app/employer/jobs",
+      admin: "/app/admin/dashboard",
+    };
+
+    router.push(paths[userRole] || "/");
+  } catch (error) {
+    errorMessage.value = error.response?.data?.message || "Invalid credentials";
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
+  
