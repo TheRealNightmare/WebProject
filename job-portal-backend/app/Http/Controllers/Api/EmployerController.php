@@ -33,10 +33,19 @@ class EmployerController extends Controller
         return response()->json($job);
     }
 
-    public function getApplicats($jobId) {
+    public function myJobs(Request $request)
+    {
+        $jobs = Job::where('employer_id', auth('sanctum')->id())
+            ->withCount('applications')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return response()->json($jobs);
+    }
+
+    public function getApplicants($jobId) {
         $job = Job::where('id', $jobId)->where('employer_id', auth('sanctum')->id())->firstOrFail();
         $applicants = $job->applications()
-           ->with('seeker.skills')
+           ->with(['seeker'])
            ->orderBy('match_percentage', 'desc')
            ->get();
         return response()->json($applicants);
