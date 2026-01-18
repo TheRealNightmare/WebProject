@@ -1,11 +1,15 @@
 <template>
   <div class="bg-white p-10 rounded-2xl shadow-xl shadow-primary/5 w-full">
     <div class="text-center mb-8">
-      <div class="flex items-center justify-center gap-2 text-primary font-bold text-lg mb-6">
+      <div
+        class="flex items-center justify-center gap-2 text-primary font-bold text-lg mb-6"
+      >
         <i class="fa-solid fa-briefcase"></i> <span>JobPortal</span>
       </div>
       <h1 class="text-xl font-bold text-dark mb-1">Create Account</h1>
-      <p class="text-sm text-muted">Join us today and find your perfect match</p>
+      <p class="text-sm text-muted">
+        Join us today and find your perfect match
+      </p>
     </div>
 
     <div class="mb-5">
@@ -32,7 +36,9 @@
       <div>
         <label class="block text-sm text-muted mb-1.5">Full Name</label>
         <div class="relative flex items-center group">
-          <i class="fa-regular fa-user absolute left-4 text-gray-400 text-sm group-focus-within:text-primary transition-colors"></i>
+          <i
+            class="fa-regular fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-primary transition-colors"
+          ></i>
           <input
             v-model="formData.name"
             type="text"
@@ -46,7 +52,9 @@
       <div>
         <label class="block text-sm text-muted mb-1.5">Email Address</label>
         <div class="relative flex items-center group">
-          <i class="fa-regular fa-envelope absolute left-4 text-gray-400 text-sm group-focus-within:text-primary transition-colors"></i>
+          <i
+            class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-primary transition-colors"
+          ></i>
           <input
             v-model="formData.email"
             type="email"
@@ -60,7 +68,9 @@
       <div>
         <label class="block text-sm text-muted mb-1.5">Password</label>
         <div class="relative flex items-center group">
-          <i class="fa-solid fa-lock absolute left-4 text-gray-400 text-sm group-focus-within:text-primary transition-colors"></i>
+          <i
+            class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-primary transition-colors"
+          ></i>
           <input
             v-model="formData.password"
             type="password"
@@ -74,7 +84,9 @@
       <div>
         <label class="block text-sm text-muted mb-1.5">Confirm Password</label>
         <div class="relative flex items-center group">
-          <i class="fa-solid fa-lock absolute left-4 text-gray-400 text-sm group-focus-within:text-primary transition-colors"></i>
+          <i
+            class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-primary transition-colors"
+          ></i>
           <input
             v-model="formData.password_confirmation"
             type="password"
@@ -99,13 +111,15 @@
         :disabled="isLoading"
         class="w-full py-3 bg-primary text-white rounded-lg font-semibold shadow-lg shadow-primary/25 hover:bg-primary-hover transition-all disabled:opacity-50"
       >
-        {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+        {{ isLoading ? "Creating Account..." : "Create Account" }}
       </button>
     </form>
 
     <div class="text-center mt-6 text-sm text-muted">
       Already have an account?
-      <router-link to="/login" class="text-primary font-medium hover:underline">Sign in</router-link>
+      <router-link to="/login" class="text-primary font-medium hover:underline"
+        >Sign in</router-link
+      >
     </div>
   </div>
 </template>
@@ -121,7 +135,7 @@ const errorMessage = ref("");
 
 const roleOptions = [
   { label: "Find a Job", value: "seeker" },
-  { label: "Hire Talent", value: "employer" }
+  { label: "Hire Talent", value: "employer" },
 ];
 
 const formData = reactive({
@@ -129,7 +143,7 @@ const formData = reactive({
   email: "",
   password: "",
   password_confirmation: "",
-  role: "seeker" // default
+  role: "seeker",
 });
 
 const handleSignup = async () => {
@@ -137,19 +151,16 @@ const handleSignup = async () => {
   errorMessage.value = "";
 
   try {
-    const response = await api.post('/register', formData);
-    
-    // Store token and user info
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
+    const response = await api.post("/register", formData);
 
-    // Redirect based on role
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
+
     const paths = {
       seeker: "/app/seeker/dashboard",
-      employer: "/app/employer/jobs"
+      employer: "/app/employer/jobs",
     };
     router.push(paths[formData.role]);
-    
   } catch (error) {
     errorMessage.value = error.response?.data?.message || "Registration failed";
   } finally {

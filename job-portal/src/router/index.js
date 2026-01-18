@@ -1,50 +1,69 @@
 import { createRouter, createWebHistory } from "vue-router";
-
-// Layouts
-import DashboardLayout from "../layouts/DashboardLayout.vue";
-
-// Views
 import Landing from "../views/Landing.vue";
+import AuthLayout from "../layouts/AuthLayout.vue";
 import Login from "../views/auth/Login.vue";
 import Signup from "../views/auth/Signup.vue";
+import DashboardLayout from "../layouts/DashboardLayout.vue";
+
+// Import other views as needed...
 import SeekerDashboard from "../views/seeker/Dashboard.vue";
-import SeekerApplications from "../views/seeker/MyApplications.vue";
-import SeekerProfile from "../views/seeker/Profile.vue";
-import JobDetails from "../views/seeker/JobDetails.vue";
 import EmployerJobs from "../views/employer/MyJobs.vue";
 import EmployerApplicants from "../views/employer/Applicants.vue";
 import AdminDashboard from "../views/admin/Dashboard.vue";
-import AdminJobs from "../views/admin/JobManagement.vue";
+import JobManagement from "../views/admin/JobManagement.vue";
+import JobDetails from "../views/seeker/JobDetails.vue";
+import MyApplications from "../views/seeker/MyApplications.vue";
+import Profile from "../views/seeker/Profile.vue";
 
 const routes = [
-  { path: "/", component: Landing },
-  { path: "/login", component: Login },
-  { path: "/signup", component: Signup },
-
-  // App Routes (Protected)
+  {
+    path: "/",
+    name: "Landing",
+    component: Landing,
+  },
+  // AUTH ROUTES (Wrapped in AuthLayout to center the card)
+  {
+    path: "/",
+    component: AuthLayout,
+    children: [
+      {
+        path: "login",
+        name: "Login",
+        component: Login,
+      },
+      {
+        path: "signup",
+        name: "Signup",
+        component: Signup,
+      },
+    ],
+  },
+  // APP ROUTES (Wrapped in DashboardLayout)
   {
     path: "/app",
     component: DashboardLayout,
+    meta: { requiresAuth: true },
     children: [
-      // Seeker
       {
         path: "seeker/dashboard",
         component: SeekerDashboard,
         meta: { role: "seeker" },
       },
       {
+        path: "job/:id",
+        component: JobDetails,
+        meta: { role: "seeker" },
+      },
+      {
         path: "seeker/applications",
-        component: SeekerApplications,
+        component: MyApplications,
         meta: { role: "seeker" },
       },
       {
         path: "seeker/profile",
-        component: SeekerProfile,
+        component: Profile,
         meta: { role: "seeker" },
       },
-      { path: "job/:id", component: JobDetails, meta: { role: "seeker" } },
-
-      // Employer
       {
         path: "employer/jobs",
         component: EmployerJobs,
@@ -55,14 +74,16 @@ const routes = [
         component: EmployerApplicants,
         meta: { role: "employer" },
       },
-
-      // Admin
       {
         path: "admin/dashboard",
         component: AdminDashboard,
         meta: { role: "admin" },
       },
-      { path: "admin/jobs", component: AdminJobs, meta: { role: "admin" } },
+      {
+        path: "admin/jobs",
+        component: JobManagement,
+        meta: { role: "admin" },
+      },
     ],
   },
 ];
@@ -70,6 +91,16 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+// Simple navigation guard
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem("token");
+  if (to.meta.requiresAuth && !token) {
+    next("/login");
+  } else {
+    next();
+  }
 });
 
 export default router;

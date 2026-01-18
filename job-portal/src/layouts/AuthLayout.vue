@@ -5,10 +5,11 @@
     <div class="w-full max-w-[420px] flex flex-col gap-4">
       <router-link
         to="/"
-        class="flex items-center gap-2 text-muted text-sm font-medium hover:text-dark transition-colors self-start"
+        class="flex items-center gap-2 text-muted text-sm font-medium hover:text-dark transition-colors self-start ml-1"
       >
         <i class="fa-solid fa-arrow-left"></i> Back to home
       </router-link>
+
       <router-view />
     </div>
   </div>

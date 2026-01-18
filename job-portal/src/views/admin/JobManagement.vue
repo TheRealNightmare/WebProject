@@ -13,9 +13,9 @@
     </header>
 
     <div
-      class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden"
+      class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto"
     >
-      <table class="w-full text-left border-collapse">
+      <table class="w-full text-left border-collapse min-w-[700px]">
         <thead class="bg-gray-50 border-b border-gray-200">
           <tr>
             <th

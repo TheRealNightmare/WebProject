@@ -19,7 +19,7 @@
           <label class="block text-sm text-muted mb-2">Email Address</label>
           <div class="relative flex items-center group">
             <i
-              class="fa-solid fa-envelope absolute left-4 text-gray-400 text-sm group-focus-within:text-primary transition-colors"
+              class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-primary transition-colors"
             ></i>
             <input
               v-model="email"
@@ -34,7 +34,7 @@
           <label class="block text-sm text-muted mb-2">Password</label>
           <div class="relative flex items-center group">
             <i
-              class="fa-solid fa-lock absolute left-4 text-gray-400 text-sm group-focus-within:text-primary transition-colors"
+              class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-primary transition-colors"
             ></i>
             <input
               v-model="password"
@@ -84,7 +84,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import api from "../../api";
+import api from "../../api"; // Ensure this path is correct based on your folder structure
 
 const router = useRouter();
 const email = ref("");
@@ -102,11 +102,9 @@ const handleLogin = async () => {
       password: password.value,
     });
 
-    // Store auth data
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("user", JSON.stringify(response.data.user));
 
-    // Redirect based on the role returned by the backend
     const userRole = response.data.role;
     const paths = {
       seeker: "/app/seeker/dashboard",
@@ -122,4 +120,3 @@ const handleLogin = async () => {
   }
 };
 </script>
-  

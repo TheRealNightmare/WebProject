@@ -1,6 +1,6 @@
 <template>
   <aside
-    class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col p-6 z-50"
+    class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 hidden md:flex flex-col p-6 z-50"
   >
     <div class="flex items-center gap-2 font-bold text-xl text-primary mb-12">
       <i :class="roleIcon" class="text-xl"></i>
@@ -48,12 +48,12 @@ const route = useRoute();
 const currentRole = computed(() => route.meta.role || "seeker");
 
 const roleTitle = computed(() =>
-  currentRole.value === "admin" ? "Admin Panel" : "JobPortal"
+  currentRole.value === "admin" ? "Admin Panel" : "JobPortal",
 );
 const roleIcon = computed(() =>
   currentRole.value === "admin"
     ? "fa-solid fa-shield-halved"
-    : "fa-solid fa-briefcase"
+    : "fa-solid fa-briefcase",
 );
 
 const menuItems = computed(() => {
