@@ -14,6 +14,9 @@ class EmployerController extends Controller
         $request->validate([
             'title' => 'required',
             'description' => 'required',
+            'location' => 'required',
+            'salary' => 'required',
+            'type' => 'required',
             'skills' => 'required|array'
         ]);
 
@@ -22,8 +25,8 @@ class EmployerController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'location' => $request->location,
-            'salary_range' => $request->salary,
-            'type' => $request->type()
+            'salary_range' => $request->salary, // Map 'salary' to 'salary_range'
+            'type' => $request->type // Fixed: removed ()
         ]);
 
         foreach($request->skills as $skillName) {

@@ -76,24 +76,25 @@
 
           <div>
             <label class="block text-sm text-muted mb-1.5"
-              >Required Skills (Press Enter to add)</label
+              >Required Skills</label
             >
             <div class="flex gap-2 mb-2">
-              <input
-                v-model="skillInput"
-                @keydown.enter.prevent="addSkill"
-                type="text"
+              <select
+                v-model="selectedSkill"
+                @change="addSkill"
                 class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:border-primary outline-none"
-                placeholder="Add skill..."
-              />
-              <button
-                type="button"
-                @click="addSkill"
-                class="px-5 py-2.5 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover"
               >
-                Add
-              </button>
+                <option value="" disabled>Select a skill...</option>
+                <option
+                  v-for="skill in availableSkills"
+                  :key="skill.id"
+                  :value="skill.name"
+                >
+                  {{ skill.name }}
+                </option>
+              </select>
             </div>
+
             <div class="flex flex-wrap gap-2">
               <span
                 v-for="(s, index) in form.skills"
@@ -137,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import api from "../api";
 
 defineProps({ isOpen: Boolean });
@@ -145,7 +146,8 @@ const emit = defineEmits(["close", "jobPosted"]);
 
 const loading = ref(false);
 const error = ref("");
-const skillInput = ref("");
+const selectedSkill = ref("");
+const availableSkills = ref([]);
 
 const form = reactive({
   title: "",
@@ -156,11 +158,20 @@ const form = reactive({
   skills: [],
 });
 
-const addSkill = () => {
-  if (skillInput.value.trim()) {
-    form.skills.push(skillInput.value.trim());
-    skillInput.value = "";
+onMounted(async () => {
+  try {
+    const response = await api.get("/skills");
+    availableSkills.value = response.data;
+  } catch (err) {
+    console.error("Failed to fetch skills", err);
   }
+});
+
+const addSkill = () => {
+  if (selectedSkill.value && !form.skills.includes(selectedSkill.value)) {
+    form.skills.push(selectedSkill.value);
+  }
+  selectedSkill.value = ""; // Reset dropdown
 };
 
 const submitJob = async () => {
