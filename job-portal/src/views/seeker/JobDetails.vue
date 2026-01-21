@@ -73,12 +73,18 @@
 
           <button
             @click="applyForJob"
-            :disabled="applying"
-            class="w-full py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-primary-hover shadow-xl shadow-primary/20 transition-all disabled:opacity-50"
+            :disabled="applying || job.has_applied"
+            :class="`w-full py-4 rounded-xl font-bold text-lg shadow-xl transition-all disabled:opacity-50 ${
+              job.has_applied
+                ? 'bg-green-600 text-white cursor-not-allowed shadow-green-600/20'
+                : 'bg-primary text-white hover:bg-primary-hover shadow-primary/20'
+            }`"
           >
-            {{
-              applying ? "Submitting Application..." : "Apply for this Position"
-            }}
+            <span v-if="applying">Submitting Application...</span>
+            <span v-else-if="job.has_applied">
+              <i class="fa-solid fa-check mr-2"></i>Applied
+            </span>
+            <span v-else>Apply for this Position</span>
           </button>
         </div>
       </div>
@@ -108,16 +114,18 @@ const fetchJob = async () => {
 };
 
 const applyForJob = async () => {
+  if (job.value.has_applied) return;
+
   applying.value = true;
   message.value = "";
   isError.value = false;
 
   try {
-    // Basic apply without resume upload for now (expandable)
     await api.post(`/jobs/${job.value.id}/apply`, {
       cover_letter: "I am interested in this role.",
     });
     message.value = "Application submitted successfully!";
+    job.value.has_applied = true; // Update local state immediately
   } catch (error) {
     isError.value = true;
     message.value = error.response?.data?.message || "Failed to apply.";

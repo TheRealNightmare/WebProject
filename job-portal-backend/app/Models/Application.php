@@ -20,7 +20,7 @@ class Application extends Model
 
     public function job()
     {
-        return $this->belongsTo((job::class));
+        return $this->belongsTo(Job::class);
     }
 
     public function seeker()
