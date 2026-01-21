@@ -45,7 +45,16 @@
           class="flex flex-col md:flex-row justify-between items-start gap-6 mb-6 pb-6 border-b border-gray-100"
         >
           <div>
-            <h2 class="text-lg font-bold text-dark">{{ app.seeker.name }}</h2>
+            <div class="flex items-center gap-3 mb-1">
+              <h2 class="text-lg font-bold text-dark">{{ app.seeker.name }}</h2>
+              <span
+                v-if="app.status !== 'pending'"
+                :class="statusClasses(app.status)"
+                class="text-xs px-2 py-0.5 rounded-full font-bold capitalize border"
+              >
+                {{ app.status }}
+              </span>
+            </div>
             <p class="text-sm text-muted mb-3">{{ app.seeker.email }}</p>
             <div class="text-xs text-gray-500">
               Applied on: {{ new Date(app.created_at).toLocaleDateString() }}
@@ -81,11 +90,21 @@
           >
             <i class="fa-solid fa-download"></i> Resume
           </a>
-          <button
-            class="px-4 py-2 bg-success text-white rounded-md text-sm font-semibold hover:bg-green-600"
-          >
-            Schedule Interview
-          </button>
+
+          <div v-if="app.status === 'pending'" class="flex gap-3">
+            <button
+              @click="updateStatus(app.id, 'accepted')"
+              class="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-semibold hover:bg-green-700 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-check"></i> Accept
+            </button>
+            <button
+              @click="updateStatus(app.id, 'rejected')"
+              class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-semibold hover:bg-red-700 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-xmark"></i> Decline
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -108,7 +127,6 @@ const fetchJobs = async () => {
     const response = await api.get("/employer/jobs");
     jobs.value = response.data;
 
-    // If query param exists, use it, otherwise default to first job
     if (route.query.jobId) {
       selectedJobId.value = parseInt(route.query.jobId);
     } else if (jobs.value.length > 0) {
@@ -128,7 +146,7 @@ const fetchApplicants = async () => {
   loading.value = true;
   try {
     const response = await api.get(
-      `/employer/jobs/${selectedJobId.value}/applicants`
+      `/employer/jobs/${selectedJobId.value}/applicants`,
     );
     applicants.value = response.data;
   } catch (error) {
@@ -136,6 +154,39 @@ const fetchApplicants = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const updateStatus = async (appId, status) => {
+  if (
+    !confirm(
+      `Are you sure you want to ${status === "accepted" ? "accept" : "decline"} this applicant?`,
+    )
+  )
+    return;
+
+  try {
+    await api.put(`/employer/jobs/${selectedJobId.value}/applicants/${appId}`, {
+      status: status,
+    });
+
+    // Update local state
+    const appIndex = applicants.value.findIndex((a) => a.id === appId);
+    if (appIndex !== -1) {
+      applicants.value[appIndex].status = status;
+    }
+  } catch (error) {
+    console.error("Error updating status", error);
+    alert("Failed to update status");
+  }
+};
+
+const statusClasses = (status) => {
+  if (status === "accepted") {
+    return "bg-green-50 text-green-700 border-green-200";
+  } else if (status === "rejected") {
+    return "bg-red-50 text-red-700 border-red-200";
+  }
+  return "bg-gray-50 text-gray-600";
 };
 
 onMounted(() => {

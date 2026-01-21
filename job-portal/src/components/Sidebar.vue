@@ -69,7 +69,11 @@ const menuItems = computed(() => {
         icon: "fa-solid fa-file-lines",
         link: "/app/admin/jobs",
       },
-      { label: "Settings", icon: "fa-solid fa-gear", link: "#" },
+      {
+        label: "Settings",
+        icon: "fa-solid fa-gear",
+        link: "/app/seeker/settings",
+      },
     ];
   } else if (currentRole.value === "employer") {
     return [
@@ -77,13 +81,11 @@ const menuItems = computed(() => {
         label: "My Job Posts",
         icon: "fa-solid fa-briefcase",
         link: "/app/employer/jobs",
-        badge: "3",
       },
       {
         label: "Applicants",
         icon: "fa-solid fa-user-group",
         link: "/app/employer/applicants",
-        badge: "4",
       },
       { label: "Settings", icon: "fa-solid fa-gear", link: "#" },
     ];

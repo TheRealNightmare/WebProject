@@ -12,91 +12,116 @@
       </div>
     </header>
 
+    <div v-if="loading" class="text-center py-8 text-muted">
+      Loading jobs...
+    </div>
+
     <div
+      v-else
       class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto"
     >
       <table class="w-full text-left border-collapse min-w-[700px]">
         <thead class="bg-gray-50 border-b border-gray-200">
           <tr>
-            <th
-              v-for="h in [
-                'Title',
-                'Company',
-                'Location',
-                'Type',
-                'Applicants',
-                'Status',
-                'Actions',
-              ]"
-              :key="h"
-              class="px-6 py-4 text-xs font-bold text-dark uppercase"
-            >
-              {{ h }}
+            <th class="px-6 py-4 text-xs font-bold text-dark uppercase">
+              Title
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-dark uppercase">
+              Employer
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-dark uppercase">
+              Location
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-dark uppercase">
+              Type
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-dark uppercase">
+              Applicants
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-dark uppercase">
+              Posted On
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-dark uppercase">
+              Actions
             </th>
           </tr>
         </thead>
         <tbody>
           <tr
             v-for="job in jobs"
-            :key="job.title"
+            :key="job.id"
             class="border-b border-gray-100 last:border-0 hover:bg-gray-50"
           >
             <td class="px-6 py-4 text-sm font-medium text-dark">
               {{ job.title }}
             </td>
-            <td class="px-6 py-4 text-sm text-muted">{{ job.company }}</td>
+            <td class="px-6 py-4 text-sm text-muted">
+              {{ job.employer ? job.employer.name : "Unknown" }}
+            </td>
             <td class="px-6 py-4 text-sm text-muted">{{ job.location }}</td>
-            <td class="px-6 py-4 text-sm text-muted">{{ job.type }}</td>
+            <td class="px-6 py-4 text-sm text-muted capitalize">
+              {{ job.type }}
+            </td>
             <td class="px-6 py-4">
               <span
                 class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-bold"
-                >{{ job.count }}</span
+                >{{ job.applications_count }}</span
               >
             </td>
-            <td class="px-6 py-4">
-              <span
-                :class="[
-                  'px-2.5 py-1 rounded-full text-xs font-semibold',
-                  job.status === 'Active'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-600',
-                ]"
-                >{{ job.status }}</span
-              >
+            <td class="px-6 py-4 text-sm text-muted">
+              {{ new Date(job.created_at).toLocaleDateString() }}
             </td>
             <td class="px-6 py-4 flex gap-3">
-              <button class="text-blue-500 hover:text-blue-700">
-                <i class="fa-regular fa-pen-to-square"></i>
-              </button>
-              <button class="text-red-500 hover:text-red-700">
+              <button
+                @click="deleteJob(job.id)"
+                class="text-red-500 hover:text-red-700"
+                title="Delete Job"
+              >
                 <i class="fa-regular fa-trash-can"></i>
               </button>
             </td>
           </tr>
         </tbody>
       </table>
+      <div v-if="jobs.length === 0" class="text-center py-8 text-muted">
+        No jobs found.
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-const jobs = ref([
-  {
-    title: "Senior Frontend Developer",
-    company: "TechCorp Inc.",
-    location: "SF, CA",
-    type: "Full-time",
-    count: 24,
-    status: "Active",
-  },
-  {
-    title: "Data Scientist",
-    company: "DataCorp",
-    location: "Boston, MA",
-    type: "Full-time",
-    count: 45,
-    status: "Closed",
-  },
-]);
+import { ref, onMounted } from "vue";
+import api from "../../api";
+
+const jobs = ref([]);
+const loading = ref(true);
+
+const fetchJobs = async () => {
+  loading.value = true;
+  try {
+    const response = await api.get("/admin/jobs");
+    jobs.value = response.data;
+  } catch (error) {
+    console.error("Error fetching admin jobs", error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const deleteJob = async (id) => {
+  if (!confirm("Are you sure you want to delete this job post?")) return;
+
+  try {
+    await api.delete(`/admin/jobs/${id}`);
+    jobs.value = jobs.value.filter((j) => j.id !== id);
+  } catch (error) {
+    console.error("Error deleting job", error);
+    alert("Failed to delete job");
+  }
+};
+
+onMounted(() => {
+  fetchJobs();
+});
 </script>
