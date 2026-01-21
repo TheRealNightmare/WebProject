@@ -25,8 +25,8 @@ class EmployerController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'location' => $request->location,
-            'salary_range' => $request->salary, // Map 'salary' to 'salary_range'
-            'type' => $request->type // Fixed: removed ()
+            'salary_range' => $request->salary,
+            'type' => $request->type
         ]);
 
         foreach($request->skills as $skillName) {
@@ -52,5 +52,26 @@ class EmployerController extends Controller
            ->orderBy('match_percentage', 'desc')
            ->get();
         return response()->json($applicants);
+    }
+
+    // New method to update status
+    public function updateApplicationStatus(Request $request, $jobId, $applicationId)
+    {
+        $request->validate([
+            'status' => 'required|in:accepted,rejected'
+        ]);
+
+        $job = Job::where('id', $jobId)->where('employer_id', auth('sanctum')->id())->firstOrFail();
+        
+        $application = $job->applications()->where('id', $applicationId)->firstOrFail();
+        
+        $application->update([
+            'status' => $request->status
+        ]);
+
+        return response()->json([
+            'message' => 'Application status updated successfully',
+            'application' => $application
+        ]);
     }
 }

@@ -11,6 +11,14 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        User::create([
+            'name' => 'Super Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin', // This role matches the check in your Sidebar.vue
+            'title' => 'Administrator',
+            'location' => 'Headquarters'
+        ]);
         // 1. Specific Test Employer
         User::create([
             'name' => 'Test Employer',

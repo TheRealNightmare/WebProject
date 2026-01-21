@@ -17,8 +17,9 @@ return new class extends Migration
             $table->foreignId('seeker_id')->constrained('users')->onDelete('cascade');
             $table->text('cover_letter')->nullable();
             $table->string('resume_path')->nullable();
-            $table->float('match_percentage')->default(0); // The Twist stored here
-            $table->enum('status', ['pending', 'reviewed', 'interview', 'rejected'])->default('pending');
+            $table->float('match_percentage')->default(0); 
+            // Added 'accepted' to the enum list below
+            $table->enum('status', ['pending', 'reviewed', 'interview', 'accepted', 'rejected'])->default('pending');
             $table->timestamps();
         });
     }

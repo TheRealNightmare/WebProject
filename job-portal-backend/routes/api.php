@@ -31,4 +31,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/employer/jobs', [EmployerController::class, 'store']);
     Route::get('/employer/jobs', [EmployerController::class, 'myJobs']);
     Route::get('/employer/jobs/{id}/applicants', [EmployerController::class, 'getApplicants']);
+    Route::put('/employer/jobs/{jobId}/applicants/{applicationId}', [EmployerController::class, 'updateApplicationStatus']);
 });

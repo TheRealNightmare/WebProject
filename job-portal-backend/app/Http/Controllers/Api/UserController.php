@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Skill;
+use App\Models\Skill; // Make sure this is imported
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash; // Import Hash
-use Illuminate\Validation\ValidationException; // Import Exception
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -23,32 +23,42 @@ class UserController extends Controller
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email,'.$user->id,
             'location' => 'nullable|string',
-            // 'skills' => 'nullable|array' // Handled in Profile usually, but kept if you want
+            'skills' => 'nullable|array' // Uncommented validation
         ]);
 
+        // 1. Update basic info
         $user->update($request->only(['name', 'email', 'location']));
+
+        // 2. Handle Skills Update
+        if ($request->has('skills')) {
+            $skillIds = [];
+            foreach ($request->skills as $skillName) {
+                // Find or create the skill based on the name sent from frontend
+                $skill = Skill::firstOrCreate(['name' => trim($skillName)]);
+                $skillIds[] = $skill->id;
+            }
+            // Sync skills (removes unselected ones, adds new ones)
+            $user->skills()->sync($skillIds);
+        }
 
         return response()->json($user->load('skills'));
     }
 
-    // NEW METHOD: Handle Password Update
     public function updatePassword(Request $request)
     {
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed', // expects new_password_confirmation field
+            'new_password' => 'required|min:8|confirmed',
         ]);
 
         $user = $request->user();
 
-        // Verify current password
         if (!Hash::check($request->current_password, $user->password)) {
             throw ValidationException::withMessages([
                 'current_password' => ['The provided password does not match your current password.'],
             ]);
         }
 
-        // Update password
         $user->update([
             'password' => Hash::make($request->new_password)
         ]);
