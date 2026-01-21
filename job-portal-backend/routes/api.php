@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EmployerController;
@@ -32,4 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/employer/jobs', [EmployerController::class, 'myJobs']);
     Route::get('/employer/jobs/{id}/applicants', [EmployerController::class, 'getApplicants']);
     Route::put('/employer/jobs/{jobId}/applicants/{applicationId}', [EmployerController::class, 'updateApplicationStatus']);
+
+    Route::get('/admin/stats', [AdminController::class, 'stats']);
+    Route::get('/admin/users', [AdminController::class, 'users']);
+    Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
+    Route::get('/admin/jobs', [AdminController::class, 'jobs']);
+    Route::delete('/admin/jobs/{id}', [AdminController::class, 'deleteJob']);
 });
