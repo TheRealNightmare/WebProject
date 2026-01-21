@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // User Profile Routes
     Route::get('/user', [UserController::class, 'show']);
     Route::put('/user', [UserController::class, 'update']);
+    Route::put('/user/password', [UserController::class, 'updatePassword']);
 
     // Seeker Routes
     Route::post('/jobs/{id}/apply', [ApplicationController::class, 'apply']);

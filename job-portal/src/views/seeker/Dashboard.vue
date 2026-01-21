@@ -68,7 +68,7 @@
           </div>
 
           <div
-            v-if="job.match_percentage > 0"
+            v-if="job.match_percentage !== null"
             class="flex flex-col items-center gap-1"
           >
             <div

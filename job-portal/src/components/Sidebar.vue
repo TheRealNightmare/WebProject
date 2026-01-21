@@ -98,14 +98,17 @@ const menuItems = computed(() => {
         label: "My Applications",
         icon: "fa-solid fa-file-lines",
         link: "/app/seeker/applications",
-        badge: "3",
       },
       {
         label: "My Profile",
         icon: "fa-regular fa-user",
         link: "/app/seeker/profile",
       },
-      { label: "Settings", icon: "fa-solid fa-gear", link: "#" },
+      {
+        label: "Settings",
+        icon: "fa-solid fa-gear",
+        link: "/app/seeker/settings",
+      },
     ];
   }
 });

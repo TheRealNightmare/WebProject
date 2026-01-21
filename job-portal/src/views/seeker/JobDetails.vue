@@ -27,7 +27,7 @@
         </div>
 
         <div
-          v-if="job.match_percentage"
+          v-if="job.match_percentage !== null"
           class="bg-primary-light border border-primary/10 rounded-xl p-6 flex justify-between items-center mb-8"
         >
           <div>

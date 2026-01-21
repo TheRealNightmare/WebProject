@@ -14,6 +14,7 @@ import JobManagement from "../views/admin/JobManagement.vue";
 import JobDetails from "../views/seeker/JobDetails.vue";
 import MyApplications from "../views/seeker/MyApplications.vue";
 import Profile from "../views/seeker/Profile.vue";
+import Settings from "../views/Settings.vue";
 
 const routes = [
   {
@@ -83,6 +84,33 @@ const routes = [
         path: "admin/jobs",
         component: JobManagement,
         meta: { role: "admin" },
+      },
+    ],
+  },
+  {
+    path: "/app",
+    component: DashboardLayout,
+    meta: { requiresAuth: true },
+    children: [
+      // ... existing seeker routes ...
+      {
+        path: "seeker/settings",
+        component: Settings,
+        meta: { role: "seeker" }, // Keeps Seeker sidebar active
+      },
+
+      // ... existing employer routes ...
+      {
+        path: "employer/settings",
+        component: Settings,
+        meta: { role: "employer" }, // Keeps Employer sidebar active
+      },
+
+      // ... existing admin routes ...
+      {
+        path: "admin/settings",
+        component: Settings,
+        meta: { role: "admin" }, // Keeps Admin sidebar active
       },
     ],
   },
