@@ -1,11 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Landing from "../views/Landing.vue";
 import AuthLayout from "../layouts/AuthLayout.vue";
 import Login from "../views/auth/Login.vue";
 import Signup from "../views/auth/Signup.vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
-
-// Import other views as needed...
 import SeekerDashboard from "../views/seeker/Dashboard.vue";
 import EmployerJobs from "../views/employer/MyJobs.vue";
 import EmployerApplicants from "../views/employer/Applicants.vue";
@@ -19,14 +16,12 @@ import Settings from "../views/Settings.vue";
 const routes = [
   {
     path: "/",
-    name: "Landing",
-    component: Landing,
-  },
-  // AUTH ROUTES (Wrapped in AuthLayout to center the card)
-  {
-    path: "/",
     component: AuthLayout,
     children: [
+      {
+        path: "", // Default path "/" matches here
+        redirect: "login", // Redirect to /login
+      },
       {
         path: "login",
         name: "Login",
@@ -39,7 +34,6 @@ const routes = [
       },
     ],
   },
-  // APP ROUTES (Wrapped in DashboardLayout)
   {
     path: "/app",
     component: DashboardLayout,
@@ -87,33 +81,33 @@ const routes = [
       },
     ],
   },
-  {
-    path: "/app",
-    component: DashboardLayout,
-    meta: { requiresAuth: true },
-    children: [
-      // ... existing seeker routes ...
-      {
-        path: "seeker/settings",
-        component: Settings,
-        meta: { role: "seeker" }, // Keeps Seeker sidebar active
-      },
+  // {
+  //   path: "/app",
+  //   component: DashboardLayout,
+  //   meta: { requiresAuth: true },
+  //   children: [
+  //     // ... existing seeker routes ...
+  //     {
+  //       path: "seeker/settings",
+  //       component: Settings,
+  //       meta: { role: "seeker" }, // Keeps Seeker sidebar active
+  //     },
 
-      // ... existing employer routes ...
-      {
-        path: "employer/settings",
-        component: Settings,
-        meta: { role: "employer" }, // Keeps Employer sidebar active
-      },
+  //     // ... existing employer routes ...
+  //     {
+  //       path: "employer/settings",
+  //       component: Settings,
+  //       meta: { role: "employer" }, // Keeps Employer sidebar active
+  //     },
 
-      // ... existing admin routes ...
-      {
-        path: "admin/settings",
-        component: Settings,
-        meta: { role: "admin" }, // Keeps Admin sidebar active
-      },
-    ],
-  },
+  //     // ... existing admin routes ...
+  //     {
+  //       path: "admin/settings",
+  //       component: Settings,
+  //       meta: { role: "admin" }, // Keeps Admin sidebar active
+  //     },
+  //   ],
+  // },
 ];
 
 const router = createRouter({

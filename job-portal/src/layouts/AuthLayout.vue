@@ -7,7 +7,6 @@
         to="/"
         class="flex items-center gap-2 text-muted text-sm font-medium hover:text-dark transition-colors self-start ml-1"
       >
-        <i class="fa-solid fa-arrow-left"></i> Back to home
       </router-link>
 
       <router-view />

@@ -69,11 +69,6 @@ const menuItems = computed(() => {
         icon: "fa-solid fa-file-lines",
         link: "/app/admin/jobs",
       },
-      {
-        label: "Settings",
-        icon: "fa-solid fa-gear",
-        link: "/app/seeker/settings",
-      },
     ];
   } else if (currentRole.value === "employer") {
     return [
@@ -87,7 +82,6 @@ const menuItems = computed(() => {
         icon: "fa-solid fa-user-group",
         link: "/app/employer/applicants",
       },
-      { label: "Settings", icon: "fa-solid fa-gear", link: "#" },
     ];
   } else {
     return [
@@ -105,11 +99,6 @@ const menuItems = computed(() => {
         label: "My Profile",
         icon: "fa-regular fa-user",
         link: "/app/seeker/profile",
-      },
-      {
-        label: "Settings",
-        icon: "fa-solid fa-gear",
-        link: "/app/seeker/settings",
       },
     ];
   }
